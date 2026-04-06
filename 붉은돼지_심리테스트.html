@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>당신의 비행기는 아직 날고 있습니까</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --red: #CC1E1E;
+  --red-dim: rgba(204,30,30,0.08);
+  --black: #111111;
+  --gray1: #444444;
+  --gray2: #888888;
+  --gray3: #cccccc;
+  --gray4: #eeeeee;
+  --white: #ffffff;
+  --sans: 'Noto Sans KR', -apple-system, sans-serif;
+  --serif: 'Noto Serif KR', serif;
+}
+
+html, body {
+  background: var(--white);
+  color: var(--black);
+  font-family: var(--sans);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.screen { display: none; min-height: 100vh; flex-direction: column; }
+.screen.active { display: flex; }
+
+/* ── INTRO ── */
+#intro { justify-content: space-between; }
+
+.intro-top {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 56px 28px 36px;
+  border-bottom: 1px solid var(--gray3);
+}
+
+.intro-eyebrow {
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--red);
+  font-weight: 500;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.intro-title {
+  font-family: var(--serif);
+  font-size: clamp(28px, 8vw, 42px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  margin-bottom: 16px;
+  color: var(--black);
+}
+
+.intro-title em {
+  font-style: normal;
+  color: var(--red);
+}
+
+.intro-sub {
+  font-size: 14px;
+  color: var(--gray2);
+  line-height: 1.75;
+}
+
+.intro-bottom {
+  padding: 28px 28px 48px;
+}
+
+.intro-meta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.meta-tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 1px solid var(--gray3);
+  color: var(--gray2);
+  letter-spacing: 0.5px;
+}
+
+.btn-start {
+  width: 100%;
+  padding: 18px;
+  background: var(--red);
+  color: var(--white);
+  border: none;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: opacity 0.15s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-start:active { opacity: 0.85; transform: scale(0.99); }
+
+/* ── QUESTION ── */
+#question { justify-content: space-between; }
+
+.q-header {
+  padding: 16px 24px 14px;
+  border-bottom: 1px solid var(--gray4);
+  position: sticky;
+  top: 0;
+  background: var(--white);
+  z-index: 10;
+}
+
+.progress-track {
+  height: 2px;
+  background: var(--gray4);
+  margin-bottom: 12px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--red);
+  transition: width 0.4s ease;
+}
+
+.q-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.q-counter {
+  font-size: 12px;
+  color: var(--gray2);
+  font-weight: 500;
+}
+
+.q-cat {
+  font-size: 11px;
+  padding: 3px 9px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+.cat-커리어 { color: var(--red); border: 1px solid var(--red); }
+.cat-SNS    { color: #5544bb; border: 1px solid #5544bb; }
+.cat-AI     { color: #bb7700; border: 1px solid #bb7700; }
+.cat-취향   { color: #117755; border: 1px solid #117755; }
+.cat-관계   { color: #994477; border: 1px solid #994477; }
+
+.q-body {
+  flex: 1;
+  padding: 32px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+}
+
+.q-text {
+  font-family: var(--serif);
+  font-size: clamp(17px, 4.5vw, 22px);
+  line-height: 1.65;
+  color: var(--black);
+  font-weight: 400;
+}
+
+.q-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.choice-btn {
+  width: 100%;
+  text-align: left;
+  padding: 18px 20px;
+  background: var(--white);
+  border: 1px solid var(--gray3);
+  cursor: pointer;
+  font-family: var(--sans);
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.choice-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  color: var(--gray2);
+}
+
+.choice-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--gray1);
+}
+
+.choice-btn:active {
+  background: var(--gray4);
+}
+
+.choice-btn.selected-a {
+  border-color: var(--red);
+  border-width: 2px;
+  background: var(--red-dim);
+}
+.choice-btn.selected-a .choice-label { color: var(--red); }
+.choice-btn.selected-a .choice-text  { color: var(--black); }
+
+.choice-btn.selected-b {
+  border-color: var(--black);
+  border-width: 2px;
+  background: var(--gray4);
+}
+.choice-btn.selected-b .choice-label { color: var(--black); }
+.choice-btn.selected-b .choice-text  { color: var(--black); }
+
+.q-footer {
+  padding: 14px 24px 40px;
+  border-top: 1px solid var(--gray4);
+  text-align: center;
+}
+.q-hint {
+  font-size: 11px;
+  color: var(--gray3);
+  letter-spacing: 0.5px;
+}
+
+/* ── RESULT ── */
+#result { padding-bottom: 60px; }
+
+.result-hero {
+  padding: 48px 28px 36px;
+  border-bottom: 1px solid var(--gray4);
+}
+
+.result-eyebrow {
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--gray2);
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+
+.result-score-line {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.result-score-num {
+  font-family: var(--serif);
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 1;
+}
+.result-score-denom {
+  font-size: 16px;
+  color: var(--gray2);
+}
+
+.result-type-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 4px 12px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+.tag-pig    { color: var(--red); border: 2px solid var(--red); }
+.tag-repair { color: var(--black); border: 2px solid var(--black); }
+.tag-hangar { color: #bb7700; border: 2px solid #bb7700; }
+.tag-part   { color: var(--gray2); border: 2px solid var(--gray2); }
+
+.result-name {
+  font-family: var(--serif);
+  font-size: clamp(32px, 9vw, 48px);
+  font-weight: 700;
+  line-height: 1.15;
+  white-space: pre-line;
+  letter-spacing: -0.5px;
+  color: var(--black);
+}
+.name-pig    { color: var(--red); }
+.name-repair { color: var(--black); }
+.name-hangar { color: #bb7700; }
+.name-part   { color: var(--gray2); }
+
+.result-section {
+  padding: 28px 28px 0;
+}
+
+.result-section + .result-section {
+  padding-top: 24px;
+}
+
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--gray3);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--gray4);
+}
+
+.result-desc {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--gray1);
+}
+
+/* stat bars */
+.stat-row { margin-bottom: 14px; }
+.stat-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.stat-name { font-size: 13px; color: var(--gray1); }
+.stat-val  { font-size: 12px; font-weight: 700; color: var(--black); }
+
+.stat-track {
+  height: 3px;
+  background: var(--gray4);
+}
+.stat-fill {
+  height: 100%;
+  background: var(--red);
+  transition: width 0.9s cubic-bezier(0.4,0,0.2,1) 0.3s;
+}
+.fill-pig    .stat-fill { background: var(--red); }
+.fill-repair .stat-fill { background: var(--black); }
+.fill-hangar .stat-fill { background: #bb7700; }
+.fill-part   .stat-fill { background: var(--gray2); }
+
+/* quote */
+.result-quote {
+  margin: 0 28px;
+  padding: 20px 0;
+  border-top: 1px solid var(--gray4);
+}
+.quote-mark {
+  font-family: var(--serif);
+  font-size: 40px;
+  line-height: 1;
+  color: var(--red);
+  display: block;
+  margin-bottom: 6px;
+  opacity: 0.4;
+}
+.quote-text {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--black);
+  font-style: italic;
+}
+.quote-src {
+  font-size: 11px;
+  color: var(--gray3);
+  margin-top: 10px;
+  letter-spacing: 0.5px;
+}
+
+.result-actions {
+  padding: 28px 28px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-action {
+  width: 100%;
+  padding: 16px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  letter-spacing: 0.3px;
+}
+.btn-action:active { transform: scale(0.99); opacity: 0.85; }
+
+.btn-share {
+  background: var(--black);
+  color: var(--white);
+}
+.btn-retry {
+  background: var(--white);
+  color: var(--gray2);
+  border: 1px solid var(--gray3);
+  font-weight: 400;
+  font-size: 13px;
+}
+
+/* toast */
+.toast {
+  position: fixed;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%) translateY(60px);
+  background: var(--black);
+  color: var(--white);
+  padding: 11px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 100;
+  transition: transform 0.25s ease;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* anim */
+.fade-in { animation: fadeIn 0.3s ease forwards; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* divider */
+.hr { height: 1px; background: var(--gray4); margin: 0 28px; }
+
+/* ── PORCO INTRO CARDS ── */
+#intro-porco { justify-content: space-between; }
+
+.pc-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--gray4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pc-progress-dots {
+  display: flex;
+  gap: 6px;
+}
+.pc-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gray4);
+  transition: all 0.2s;
+}
+.pc-dot.on { background: var(--red); width: 20px; border-radius: 3px; }
+
+.pc-skip {
+  font-size: 12px;
+  color: var(--gray2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  padding: 4px 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pc-body {
+  flex: 1;
+  padding: 36px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.pc-card { display: none; }
+.pc-card.active { display: flex; flex-direction: column; gap: 16px; }
+
+.pc-num {
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--red);
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.pc-title {
+  font-family: var(--serif);
+  font-size: clamp(22px, 6vw, 28px);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--black);
+}
+.pc-body-text {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--gray1);
+}
+.pc-quote-block {
+  border-left: 3px solid var(--red);
+  padding: 12px 16px;
+  background: var(--red-dim);
+}
+.pc-quote-text {
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.7;
+  font-style: italic;
+  color: var(--black);
+}
+.pc-quote-src {
+  font-size: 11px;
+  color: var(--gray2);
+  margin-top: 6px;
+}
+.pc-tag {
+  display: inline-flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.pc-tag span {
+  font-size: 11px;
+  padding: 3px 10px;
+  border: 1px solid var(--gray3);
+  color: var(--gray2);
+}
+
+.pc-footer {
+  padding: 20px 28px 44px;
+}
+.btn-pc-next {
+  width: 100%;
+  padding: 18px;
+  background: var(--red);
+  color: var(--white);
+  border: none;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-pc-next:active { opacity: 0.85; transform: scale(0.99); }
+
+@media (min-width: 640px) {
+  .screen { max-width: 480px; margin: 0 auto; }
+  html { background: #f5f5f5; }
+}
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro" class="screen active">
+  <div class="intro-top">
+    <p class="intro-eyebrow">Porco Rosso × 2026</p>
+    <h1 class="intro-title">당신의 비행기는<br>아직 <em>날고</em> 있습니까</h1>
+    <p class="intro-sub">15개의 딜레마로<br>조종간이 누구 손에 있는지 확인하세요.</p>
+  </div>
+  <div class="intro-bottom">
+    <div class="intro-meta">
+      <span class="meta-tag">15문항</span>
+      <span class="meta-tag">약 4분</span>
+      <span class="meta-tag">4가지 타입</span>
+    </div>
+    <button class="btn-start" onclick="showPorcoIntro()">비행 시작하기</button>
+  </div>
+</div>
+
+<!-- PORCO INTRO CARDS -->
+<div id="intro-porco" class="screen">
+  <div class="pc-header">
+    <div class="pc-progress-dots">
+      <div class="pc-dot on" id="pcdot0"></div>
+      <div class="pc-dot"    id="pcdot1"></div>
+      <div class="pc-dot"    id="pcdot2"></div>
+    </div>
+    <button class="pc-skip" onclick="startTest()">건너뛰기</button>
+  </div>
+
+  <div class="pc-body">
+
+    <!-- 카드 1 -->
+    <div class="pc-card active" id="pc-card-0">
+      <p class="pc-num">01 / 03 — 작품 소개</p>
+      <h3 class="pc-title">지브리가 만든<br>어른들을 위한 영화</h3>
+      <p class="pc-body-text">1992년 미야자키 하야오 감독의 작품. 1930년대 이탈리아 아드리아해를 배경으로, 돼지 얼굴을 한 조종사 마르코의 이야기입니다.</p>
+      <p class="pc-body-text">미야자키는 이 작품을 직접 이렇게 설명했습니다.</p>
+      <div class="pc-quote-block">
+        <p class="pc-quote-text">"지쳐버린 중년 남성들을 위해 만든 영화다."</p>
+        <p class="pc-quote-src">— 미야자키 하야오, 1992</p>
+      </div>
+      <div class="pc-tag">
+        <span>반전</span><span>반파시즘</span><span>낭만</span><span>비행</span>
+      </div>
+    </div>
+
+    <!-- 카드 2 -->
+    <div class="pc-card" id="pc-card-1">
+      <p class="pc-num">02 / 03 — 핵심 설정</p>
+      <h3 class="pc-title">돼지가 된 것은<br>저주가 아니라 선택</h3>
+      <p class="pc-body-text">마르코는 1차 세계대전의 에이스 조종사였습니다. 전쟁의 참혹함을 목격하고, 국가와 파시즘이라는 시스템에 환멸을 느낍니다.</p>
+      <p class="pc-body-text">그는 그 시스템에 소속되기를 거부하기 위해 스스로 돼지가 되기를 선택했습니다. 저주가 아니라, 가장 인간적인 선택.</p>
+      <div class="pc-quote-block">
+        <p class="pc-quote-text">"파시스트가 되느니 돼지인 편이 나아."</p>
+        <p class="pc-quote-src">— 마르코 (붉은 돼지, 1992)</p>
+      </div>
+    </div>
+
+    <!-- 카드 3 -->
+    <div class="pc-card" id="pc-card-2">
+      <p class="pc-num">03 / 03 — 이 테스트는</p>
+      <h3 class="pc-title">2026년의<br>파시즘을 묻습니다</h3>
+      <p class="pc-body-text">1920년대의 파시즘이 군국주의와 전체주의였다면, 2026년의 파시즘은 무한경쟁, SNS의 시선, 알고리즘이 정해주는 기준입니다.</p>
+      <p class="pc-body-text">마르코가 조종간을 자기 손에 쥐었듯, 당신의 일상에서 조종간이 누구 손에 있는지 — 15개의 딜레마로 확인해보세요.</p>
+      <div class="pc-quote-block">
+        <p class="pc-quote-text">"날지 않는 돼지는 그냥 돼지일 뿐이야."</p>
+        <p class="pc-quote-src">— 마르코 (붉은 돼지, 1992)</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="pc-footer">
+    <button class="btn-pc-next" id="pcNextBtn" onclick="pcNext()">다음</button>
+  </div>
+</div>
+
+<!-- QUESTION -->
+<div id="question" class="screen">
+  <div class="q-header">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressBar" style="width:0%"></div>
+    </div>
+    <div class="q-meta-row">
+      <span class="q-counter" id="qCounter">1 / 15</span>
+      <span class="q-cat" id="qCatBadge"></span>
+    </div>
+  </div>
+  <div class="q-body">
+    <p class="q-text" id="qText"></p>
+    <div class="q-choices">
+      <button class="choice-btn" id="choiceA" onclick="answer('A')">
+        <span class="choice-label">A</span>
+        <span class="choice-text" id="choiceAText"></span>
+      </button>
+      <button class="choice-btn" id="choiceB" onclick="answer('B')">
+        <span class="choice-label">B</span>
+        <span class="choice-text" id="choiceBText"></span>
+      </button>
+    </div>
+  </div>
+  <div class="q-footer">
+    <p class="q-hint">솔직하게 — 지금 이 순간의 나로 선택하세요</p>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="screen">
+  <div class="result-hero fade-in">
+    <p class="result-eyebrow">Result</p>
+    <div class="result-score-line">
+      <span class="result-score-num" id="resultScoreNum">0</span>
+      <span class="result-score-denom">/ 15점</span>
+    </div>
+    <span class="result-type-tag" id="resultTag"></span>
+    <h2 class="result-name" id="resultName"></h2>
+  </div>
+
+  <div class="result-section">
+    <p class="section-label">Profile</p>
+    <p class="result-desc" id="resultDesc"></p>
+  </div>
+
+  <div class="hr" style="margin-top:28px;"></div>
+
+  <div class="result-section">
+    <p class="section-label">Status</p>
+    <div id="catBars"></div>
+  </div>
+
+  <div class="hr" style="margin-top:14px;"></div>
+
+  <div class="result-section">
+    <div class="result-quote">
+      <span class="quote-mark">"</span>
+      <p class="quote-text" id="resultQuoteText"></p>
+      <p class="quote-src">— 붉은 돼지 (紅の豚, 1992)</p>
+    </div>
+  </div>
+
+  <div class="result-actions">
+    <button class="btn-action btn-share" onclick="copyResult()">결과 공유하기</button>
+    <button class="btn-action btn-retry" onclick="retry()">다시 테스트하기</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const QUESTIONS = [
+  { cat:'커리어', q:'연봉 40% 인상 제안을 받았다. 단, 매주 60시간 이상 근무, 개인 프로젝트 전면 중단이 조건이다.', a:'수락한다 — 꿈은 나중에도 할 수 있다. 지금은 커리어가 먼저다.', b:'거절한다 — 돈보다 내 시간의 조종권이 더 중요하다.' },
+  { cat:'커리어', q:'팀장이 내 아이디어를 자기 것처럼 발표했다. 조용히 넘기면 이번 분기 승진이 유력하다.', a:'침묵한다 — 조직에서 살아남는 게 우선이다. 다음에 기회가 있을 것이다.', b:'발언한다 — 불이익이 있더라도 사실을 바로잡는 게 맞다.' },
+  { cat:'커리어', q:'주변 친구들이 새벽 5시 기상, 운동, 독서 루틴을 SNS에 매일 인증하고 있다. 나는 저녁형 인간인데 뒤처지는 것 같아 억지로 따라 해야 할 것 같다.', a:'따라 해본다 — 성공한 사람들은 다 새벽 루틴이 있더라. 나도 바꿔야 한다.', b:'내 리듬을 지킨다 — 생산성의 기준을 남의 시간표로 맞출 필요 없다.' },
+  { cat:'SNS', q:'여행 중 마음에 드는 풍경을 발견했다. 인스타에 올리면 좋아요가 많이 달릴 것 같지만, 그냥 바라보고만 싶다.', a:'촬영 후 업로드한다 — 공유해야 진짜 경험이 완성되는 느낌이다.', b:'그냥 바라본다 — 이 순간은 나만의 것으로 충분하다.' },
+  { cat:'SNS', q:'또래 지인이 집, 차, 승진 소식을 SNS에 연달아 올리고 있다. 이것을 보면서 당신은?', a:'조급해진다 — 나도 저 정도는 해야 하는 것 아닐까, 불안이 밀려온다.', b:'무관하다 — 나는 내 속도로 가고 있다. 비교 자체가 의미없다.' },
+  { cat:'SNS', q:'오늘도 유튜브 쇼츠나 릴스를 2시간 넘게 봤다. 알고리즘이 계속 다음 영상을 틀어준다. 멈추려 했지만 어느새 또 보고 있다.', a:'그냥 본다 — 피곤한 날엔 멍하니 있는 게 쉬는 거다.', b:'앱을 닫는다 — 알고리즘이 내 시간을 가져가게 두지 않겠다.' },
+  { cat:'AI', q:'중요한 기획 발표가 내일이다. AI로 초안을 통째로 뽑으면 2시간 안에 끝난다. 직접 쓰면 밤을 새야 한다.', a:'AI에 전부 맡긴다 — 결과물이 좋으면 과정은 상관없다. 효율이 능력이다.', b:'직접 쓴다 — 느리더라도 내 언어로 내 생각을 담는 게 맞다.' },
+  { cat:'AI', q:'AI가 "당신에게 최적화된 커리어 경로"를 제시했다. 지금 하는 일과 전혀 다른 방향이지만, 데이터상 성공 확률이 높다고 한다.', a:'따른다 — AI가 나보다 나를 더 잘 분석했을 것이다.', b:'무시한다 — 내 삶의 방향은 데이터가 아닌 내가 결정한다.' },
+  { cat:'AI', q:'내가 하는 직군을 AI가 대체할 수 있다는 기사가 연일 쏟아진다. 주변 동료들은 AI 공부를 시작했다. 나는?', a:'불안해서 바로 AI 공부를 시작한다 — 도태되기 싫다. 일단 따라가야 한다.', b:'하던 일을 더 깊게 판다 — 기계가 흉내 낼 수 없는 나만의 것을 만들겠다.' },
+  { cat:'취향', q:'주말 오전 5시간이 비었다. 유튜브 알고리즘이 추천하는 영상을 보다 보면 시간이 훌쩍 간다. 아니면 오래 미뤄왔던 취미를 꺼낼 수도 있다.', a:'알고리즘을 따라간다 — 쉬는 날엔 그냥 흘러가는 대로 있고 싶다.', b:'미뤄둔 취미를 한다 — 불편하더라도 내가 선택한 시간을 보낸다.' },
+  { cat:'취향', q:'요즘 아무도 안 듣는 음악 장르에 빠져 있다. 플리를 공유하면 "취향 이상하다"는 소리를 들을 것 같다.', a:'숨긴다 — 굳이 오해받을 필요 없다. 취향은 혼자 즐기면 된다.', b:'공유한다 — 내 취향이 이상하든 말든, 나다운 게 맞다.' },
+  { cat:'취향', q:'주말에 모두가 가는 핫한 팝업스토어에 갈 수 있다. 사진은 잘 나오겠지만 솔직히 별로 가고 싶지 않다.', a:'간다 — 다들 가는 데 나만 모르면 뒤처지는 느낌이 든다. 가서 인증샷이라도 찍자.', b:'안 간다 — 내가 진짜 가고 싶은 곳을 간다. 핫플은 나랑 상관없다.' },
+  { cat:'관계', q:'"너 나이에 그 정도면 뒤처진 거야"라는 말을 들었다. 당신의 반응은?', a:'흔들린다 — 맞는 말인 것 같다. 뭔가 바꿔야 하지 않을까 하는 불안이 온다.', b:'흘려보낸다 — 그 사람의 기준이 내 기준일 필요는 없다.' },
+  { cat:'관계', q:'하고 싶은 일이 생겼다. 수입은 지금보다 줄지만, 매일 아침 출근하고 싶은 일이다. 주변에서는 전부 말린다.', a:'포기한다 — 현실적으로 생각해야 한다. 좋아하는 일은 취미로도 충분하다.', b:'시도한다 — 후회보다 도전이 낫다. 비행기는 내가 조종한다.' },
+  { cat:'관계', q:'명절에 친척들이 "결혼은 언제야?", "집은 언제 살 거야?"라고 물어본다. 매번 반복되는 질문이 불편하다.', a:'맞장구를 친다 — 괜한 갈등 만들기 싫다. 적당히 웃으며 넘어가는 게 편하다.', b:'내 기준을 말한다 — 불편하더라도 내 선택과 속도를 설명한다.' },
+];
+
+const RESULTS = [
+  { range:[0,3],   type:'pig',    tag:'낭만적인 돼지',   name:'낭만적인\n돼지',    desc:'당신은 이미 비행기를 조종하고 있습니다. 세상의 기준에 흔들리지 않고 스스로의 속도와 가치로 살아가는 사람. 마르코가 맑은 하늘을 혼자 날듯, 당신의 하늘은 당신 것입니다.', quote:'날지 않는 돼지는 그냥 돼지일 뿐이야.' },
+  { range:[4,7],   type:'repair', tag:'비행기 수리 중',   name:'비행기\n수리 중',  desc:'조종간을 잡고 싶은 마음은 있지만, 시스템의 무게에 눌려 가끔 흔들립니다. 격납고에서 엔진을 다시 손보는 중. 비행기는 아직 당신 것입니다.', quote:'파시스트가 되느니 돼지인 편이 나아.' },
+  { range:[8,11],  type:'hangar', tag:'격납고의 조종사', name:'격납고의\n조종사', desc:'조종 면허는 있지만, 비행기가 격납고 안에 멈춰 있습니다. 언제 날아야 할지 알면서도 시동을 걸지 못하는 상태. 조종간은 아직 당신 손에 있습니다.', quote:'나는 이 미쳐버린 인간 사회에 소속되기를 거부한다.' },
+  { range:[12,15], type:'part',   tag:'시스템의 부품',    name:'시스템의\n부품',   desc:'비행기의 조종간이 어느새 시스템의 손에 넘어갔습니다. 효율적이고 안전하지만, 목적지는 당신이 정하지 않습니다. 지금이라도 조종간을 되찾을 수 있습니다.', quote:'당신의 비행기를 — 다시 띄울 수 있습니다.' },
+];
+
+const CAT_ORDER = ['커리어','SNS','AI','취향','관계'];
+let current = 0, scores = [], catScores = {}, answering = false;
+let pcCurrent = 0;
+
+function showPorcoIntro() {
+  pcCurrent = 0;
+  updatePcCard(0);
+  showScreen('intro-porco');
+}
+
+function updatePcCard(n) {
+  document.querySelectorAll('.pc-card').forEach((c,i) => c.classList.toggle('active', i === n));
+  document.querySelectorAll('.pc-dot').forEach((d,i) => d.classList.toggle('on', i === n));
+  const btn = document.getElementById('pcNextBtn');
+  btn.textContent = n === 2 ? '테스트 시작하기' : '다음';
+  btn.style.background = n === 2 ? 'var(--black)' : 'var(--red)';
+}
+
+function pcNext() {
+  if (pcCurrent < 2) {
+    pcCurrent++;
+    updatePcCard(pcCurrent);
+  } else {
+    startTest();
+  }
+}
+
+function startTest() {
+  current = 0; scores = []; answering = false;
+  catScores = { '커리어':0, 'SNS':0, 'AI':0, '취향':0, '관계':0 };
+  showScreen('question');
+  renderQuestion();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[current];
+  document.getElementById('qCounter').textContent = `${current + 1} / ${QUESTIONS.length}`;
+  document.getElementById('progressBar').style.width = `${(current / QUESTIONS.length) * 100}%`;
+
+  const badge = document.getElementById('qCatBadge');
+  badge.textContent = q.cat;
+  badge.className = `q-cat cat-${q.cat}`;
+
+  const body = document.querySelector('.q-body');
+  body.classList.remove('fade-in'); void body.offsetWidth; body.classList.add('fade-in');
+
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('choiceAText').textContent = q.a;
+  document.getElementById('choiceBText').textContent = q.b;
+  document.getElementById('choiceA').className = 'choice-btn';
+  document.getElementById('choiceB').className = 'choice-btn';
+  answering = false;
+}
+
+function answer(choice) {
+  if (answering) return;
+  answering = true;
+  const q = QUESTIONS[current];
+  const isA = choice === 'A';
+  scores.push(isA ? 1 : 0);
+  catScores[q.cat] += (isA ? 1 : 0);
+  document.getElementById(isA ? 'choiceA' : 'choiceB').classList.add(isA ? 'selected-a' : 'selected-b');
+  setTimeout(() => {
+    current++;
+    current < QUESTIONS.length ? renderQuestion() : showResult();
+  }, 300);
+}
+
+function showResult() {
+  const total = scores.reduce((a, b) => a + b, 0);
+  const res = RESULTS.find(r => total >= r.range[0] && total <= r.range[1]);
+
+  document.getElementById('resultScoreNum').textContent = total;
+
+  const tag = document.getElementById('resultTag');
+  tag.textContent = res.tag;
+  tag.className = `result-type-tag tag-${res.type}`;
+
+  const nm = document.getElementById('resultName');
+  nm.textContent = res.name;
+  nm.style.whiteSpace = 'pre-line';
+  nm.className = `result-name name-${res.type}`;
+
+  document.getElementById('resultDesc').textContent = res.desc;
+  document.getElementById('resultQuoteText').textContent = res.quote;
+
+  const barsEl = document.getElementById('catBars');
+  barsEl.innerHTML = '';
+  barsEl.className = `fill-${res.type}`;
+  CAT_ORDER.forEach(cat => {
+    const s = catScores[cat];
+    const pct = Math.round((s / 3) * 100);
+    const d = document.createElement('div');
+    d.className = 'stat-row';
+    d.innerHTML = `
+      <div class="stat-meta">
+        <span class="stat-name">${cat}</span>
+        <span class="stat-val">${s} / 3</span>
+      </div>
+      <div class="stat-track">
+        <div class="stat-fill" style="width:0%" data-pct="${pct}"></div>
+      </div>`;
+    barsEl.appendChild(d);
+  });
+
+  showScreen('result');
+  const hero = document.querySelector('.result-hero');
+  hero.classList.remove('fade-in'); void hero.offsetWidth; hero.classList.add('fade-in');
+
+  setTimeout(() => {
+    document.querySelectorAll('.stat-fill').forEach(el => {
+      el.style.width = el.dataset.pct + '%';
+    });
+  }, 400);
+}
+
+function copyResult() {
+  const total = scores.reduce((a, b) => a + b, 0);
+  const res = RESULTS.find(r => total >= r.range[0] && total <= r.range[1]);
+  const text = `당신의 비행기는 아직 날고 있습니까\n\n결과: ${res.name.replace('\n',' ')} (${total}/15점)\n\n${res.desc}\n\n"${res.quote}"\n— 붉은 돼지 × 21세기 파시즘`;
+  if (navigator.share) {
+    navigator.share({ text }).catch(() => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => showToast('복사됐어요'));
+  } else {
+    const t = document.createElement('textarea');
+    t.value = text; t.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(t); t.select();
+    document.execCommand('copy'); document.body.removeChild(t);
+    showToast('복사됐어요');
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function retry() { showScreen('intro'); }
+</script>
+</body>
+</html>
